@@ -28,7 +28,8 @@ function App() {
   const [stations, setStations] = useState([]);
   const [startStationId, setStartStationId] = useState(null);
   const [endStationId, setEndStationId] = useState(null);
-
+  
+const isDisabled = !selectedDay && !startStationId && !endStationId;
 
   useEffect(() => {
     console.log('Selected day is:', selectedDay);
@@ -89,19 +90,21 @@ function App() {
     fetchStations();
   }, []);
 
+  useEffect(() => {
+  const cards = document.querySelectorAll('.timetable-card');
+  cards.forEach((card, index) => {
+    setTimeout(() => {
+      card.classList.add('visible');
+    }, index * 100); // Stagger fade-ins by 100ms
+  });
+}, [timetables]);
+
   return (
     <div className="App">
       <h1>Today’s Train Timetable 🚆</h1>
 
-      <div
-        style={{
-          padding: '16px',
-          marginBottom: '24px',
-          border: '2px solid #ddd',
-          borderRadius: '8px',
-          backgroundColor: '#f3f3f3',
-        }}
-      >
+      <div className="filter-panel">
+     
         <h2 style={{ marginBottom: '12px' }}>Filter Your Trip</h2>
 
         {/* Day Selector */}
@@ -135,6 +138,7 @@ function App() {
               ))}
             </select>
           </div>
+  
 
           {/* ✅ Move your End Station here */}
           <div style={{ marginBottom: '12px' }}>
@@ -153,6 +157,7 @@ function App() {
 
   {/* Reset Filters Button */}
 <button
+  disabled={isDisabled}
   onClick={() => {
     setStartStationId(null);
     setEndStationId(null);
@@ -161,15 +166,16 @@ function App() {
   style={{
     marginTop: '12px',
     padding: '8px 12px',
-    backgroundColor: '#f44336',
-    color: 'white',
+    backgroundColor: isDisabled ? '#ddd' : '#f44336',
+    color: isDisabled ? '#666' : 'white',
     border: 'none',
     borderRadius: '4px',
-    cursor: 'pointer'
+    cursor: isDisabled ? 'not-allowed' : 'pointer'
   }}
 >
   Reset Filters
 </button>
+
 
 </div>
 
@@ -180,21 +186,26 @@ function App() {
           return (
             <div
               key={t.id}
-              style={{
-                border: `2px solid ${isSingleDay ? '#4CAF50' : '#2196F3'}`,
-                borderRadius: '8px',
-                padding: '12px',
-                marginBottom: '12px',
-                backgroundColor: '#f9f9f9'
-              }}
+              className="timetable-card"
             >
-              <p><strong>Route:</strong> {t.route_id}</p>
-              <p><strong>Departure:</strong> {formatTime(t.departure_time)}</p>
-              <p><strong>Arrival:</strong> {formatTime(t.arrival_time)}</p>
-              <p><strong>From:</strong> {t.routes?.start_station?.name}</p>
-              <p><strong>To:</strong> {t.routes?.end_station?.name}</p>
-              <p><strong>Active Days:</strong> {t.days_active}</p>
-            </div>
+              <div
+                style={{
+                  border: `2px solid ${isSingleDay ? '#4CAF50' : '#2196F3'}`,
+                  borderRadius: '8px',
+                  padding: '12px',
+                  marginBottom: '12px',
+                  backgroundColor: '#f9f9f9'
+                }}
+              >
+                  <p><strong>Route:</strong> {t.route_id}</p>
+                  <p><strong>Departure:</strong> {formatTime(t.departure_time)}</p>
+                  <p><strong>Arrival:</strong> {formatTime(t.arrival_time)}</p>
+                  <p><strong>From:</strong> {t.routes?.start_station?.name}</p>
+                  <p><strong>To:</strong> {t.routes?.end_station?.name}</p>
+                  <p><strong>Active Days:</strong> {t.days_active}</p>
+                </div>
+              </div>
+
           );
         })
       ) : (

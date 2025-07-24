@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.timetable-card {
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.timetable-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
