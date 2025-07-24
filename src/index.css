@@ -24,3 +24,88 @@ code {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.preset-button {
+  padding: 8px 12px;
+  margin-right: 8px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.preset-button.reset {
+  background-color: #2196F3;
+}
+
+.preset-button.peak {
+  background-color: #FF9800;
+}
+
+.filter-panel {
+  background-color: #f0f4f8;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.timetable-card {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.timetable-card.visible {
+  opacity: 1;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #1976d2;
+  margin-bottom: 16px;
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin-top: 20px;
+  color: #333;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.preset-button {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.preset-button:hover {
+  background-color: #1769aa;
+}
+
+.preset-button.reset {
+  background-color: #f44336;
+}
+
+.preset-button.peak {
+  background-color: #ff9800;
+}
+
+
+
+

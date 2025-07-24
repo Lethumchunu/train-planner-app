@@ -21,6 +21,7 @@ const formatTime = (isoTime) =>
 
 function App() {
   const [timetables, setTimetables] = useState([]);
+  const [allTrains, setAllTrains] = useState([]);
   const [selectedDay, setSelectedDay] = useState(
     new Date().toLocaleDateString('en-US', { weekday: 'short' })
   );
@@ -29,7 +30,42 @@ function App() {
   const [startStationId, setStartStationId] = useState(null);
   const [endStationId, setEndStationId] = useState(null);
   
-const isDisabled = !selectedDay && !startStationId && !endStationId;
+  const isDisabled = !selectedDay && !startStationId && !endStationId;
+
+  const handleMorningOnly = () => {
+    const filteredMorningTrains = timetables.filter((t) => {
+      const hour = parseInt(t.departure_time.split(':')[0], 10);
+      return hour >= 5 && hour <= 10;
+    });
+    setTimetables(filteredMorningTrains);
+  };
+
+  const resetFilters = () => {
+    setStartStationId(null);
+    setEndStationId(null);
+    setSelectedDay(new Date().toLocaleDateString('en-US', { weekday: 'short' }));
+    setTimetables(allTrains); // ✅ restore the full train list
+  };
+
+  const handlePeakHours = () => {
+  const peakTrains = allTrains.filter((t) => {
+    const hour = parseInt(t.departure_time.split(':')[0], 10);
+    return (hour >= 6 && hour <= 9) || (hour >= 16 && hour <= 19);
+  });
+  setTimetables(peakTrains);
+};
+
+  const handleEveningOnly = () => {
+  const eveningTrains = timetables.filter((t) => {
+    const hour = parseInt(t.departure_time.split(':')[0], 10);
+    return hour >= 17 && hour <= 22;
+  });
+  setTimetables(eveningTrains);
+};
+
+  const [activePreset, setActivePreset] = useState('All Trains');
+
+
 
   useEffect(() => {
     console.log('Selected day is:', selectedDay);
@@ -60,6 +96,8 @@ const isDisabled = !selectedDay && !startStationId && !endStationId;
       console.error('Error fetching data:', error);
       setTimetables([]);
     } else {
+
+      
       // Filter results based on selected stations
       const filtered = data.filter((t) =>
         (!startStationId || t.routes?.start_station?.id === startStationId) &&
@@ -67,6 +105,7 @@ const isDisabled = !selectedDay && !startStationId && !endStationId;
       );
 
       setTimetables(filtered);
+      setAllTrains(data);
       console.log('Filtered data:', filtered);
     }
   };
@@ -176,9 +215,29 @@ const isDisabled = !selectedDay && !startStationId && !endStationId;
   Reset Filters
 </button>
 
-
 </div>
 
+<div className="preset-buttons" style={{ marginTop: '16px', marginBottom: '12px' }}>
+  <button onClick={handleMorningOnly} className="preset-button">
+    Morning Only
+  </button>
+
+  <button onClick={handleEveningOnly} className="preset-button">
+    Evening Only
+  </button>
+
+  <button onClick={handlePeakHours} className="preset-button peak">
+    Peak Hours
+  </button>
+  
+  <button onClick={resetFilters} className="preset-button reset">
+    Show All
+  </button>
+</div>
+
+<p style={{ fontStyle: 'italic', marginTop: '12px' }}>
+  Currently viewing: <strong>{activePreset}</strong>
+</p>
       {timetables.length > 0 ? (
         timetables.map((t) => {
           const isSingleDay = t.days_active === selectedDay;
@@ -209,11 +268,19 @@ const isDisabled = !selectedDay && !startStationId && !endStationId;
           );
         })
       ) : (
-        <p>No timetable data found for {selectedDay}.</p>
-      )}
+        <p style={{ color: '#757575', marginTop: '16px' }}>
+          🚫 No trains scheduled for <strong>{selectedDay}</strong>. Try another day or adjust your filters.
+        </p>
+        
 
+      )}
+      
+      <p style={{ fontSize: '0.9rem', color: '#aaa', marginTop: '20px', textAlign: 'center' }}>
+  🚆 Built for South Africa’s rail riders. Live data, smart filters, smoother commutes.
+</p>
     </div>
   );
+  
 }
 
 export default App;
